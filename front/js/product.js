@@ -1,4 +1,6 @@
-/**  Extract the id of the product from the URL */
+/**  
+ * Extract the id of the product from the URL 
+ */
 function getProductId() {
   const url = new URL(window.location.href);
   const urlParams = new URLSearchParams(url.search);
@@ -6,7 +8,8 @@ function getProductId() {
   return productId;
 }
 
-/** Create an element image and put the picture of the product in it
+/** 
+ * Create an element image and put the picture of the product in it
 * Add product name, price and description
 * Create an element option and put the available colors in it
 */
@@ -34,7 +37,8 @@ function productFetch() {
 }
 productFetch();
 
-/** Give the "Ajouter au panier" button a role
+/** 
+ * Give the "Ajouter au panier" button a role
 * Make sure the quantity is between 1 and 100
 * Assign the values of the product in the cart
 * In case the product is already in the cart (using the id and the color) we add the quantity but make sure the customers can't put more than a 100 copies in the cart (50 products x3 for example)
@@ -92,13 +96,14 @@ function addToCart() {
   });
 }
 
-/** Display an alert window to inform the customer the product has been added to the cart
+/** 
+ * Display an alert window to inform the customer the product has been added to the cart
 * Customer can click "ok" if they want to go to their cart
 */
 function goToCartPage() {
   if (
       window.confirm(
-          "Votre produit a été ajouté au panier. Pour le consulter, cliquez sur OK."
+          "Votre produit a été ajouté au panier avec succès. Pour le consulter, cliquez sur OK."
       )
   ) {
       window.location.href = "cart.html";

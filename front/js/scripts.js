@@ -1,4 +1,5 @@
-/** Fetch the API 
+/** 
+ * Fetch the API 
  * Loop to make sure we take all the informations we need to create the product card (link, image, name, description)
  */
  function cardsFetch() {
@@ -36,5 +37,7 @@
         })
 }
 
-/** Starting the function when the DOM is fully loaded */
+/** 
+ * Starting the function when the DOM is fully loaded 
+ */
 window.addEventListener('DOMContentLoaded', cardsFetch);
