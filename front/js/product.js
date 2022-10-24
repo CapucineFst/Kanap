@@ -33,10 +33,23 @@ const productDescription = document.getElementById("description");
 const productColor = document.getElementById("colors");
 const productQuantity = document.getElementById("quantity");
 
+// Creation of the object "product" and setting his default parameter
+
+var product = {
+    id: 0,
+    colors: "",
+    quantity: 0,
+    name: "",
+    price: "",
+    image: "",
+    altTxt: "" 
+};
+
 /**
  *Create an element image and put the picture of the product in it
- * Add product name, price and description
+ * Add product name, price, description, image and altTxt
  * Create an element option and put the available colors in it
+ * Add the name, price, description, image and altTxt to the object product
  * @param {*} selectedProduct 
  */
 function dataTreatment(selectedProduct) {
@@ -54,69 +67,77 @@ function dataTreatment(selectedProduct) {
         const productColor = document.createElement("option");
         document.querySelector("#colors").appendChild(productColor);
         productColor.textContent = selectedProduct.colors[i];
+        console.log(productColor)  ;
     }
-    addToCart(selectedProduct);
+
+    product.image = selectedProduct.imageUrl;
+    product.altTxt = selectedProduct.altTxt;
+    product.name = selectedProduct.name;
+    product.price = selectedProduct.price;
+    product.description = selectedProduct.description;
+
+    addToCart();
 
 }
 /** 
  * Give the "Ajouter au panier" button a role
- * Make sure the quantity is between 1 and 100
+ * Make sure the quantity is between 1 and 100 otherwise display an error message
+ * Add the id, colors and quantity to the product
  * Assign the values of the product in the cart
  * In case the product is already in the cart (using the id and the color) we add the quantity but make sure the customers can't put more than a 100 copies in the cart (50 products x3 for example)
  * If the product is not in the cart, we simply add it to the existing cart
  * If the cart was empty, we create it and add the product
  */
-function addToCart() {
+ function addToCart() {
     document.getElementById("addToCart").addEventListener("click", (event) => {
         event.preventDefault();
-        if (productQuantity.value > 0 && productQuantity.value <= 100) {
-            let choosenQuantity = productQuantity.value;
-            let choosenColor = productColor.value;
+        if (productColor.value != "") {
+            if (productQuantity.value > 0 && productQuantity.value <= 100) {
+                let choosenQuantity = productQuantity.value;
+                let choosenColor = productColor.value;
 
-            let product = {
-                id: getProductId(),
-                colors: choosenColor,
-                quantity: choosenQuantity,
-                name: productTitle.textContent,
-                price: productPrice.textContent,
-                image: productPicture.src,
-                altTxt: productPicture.alt,
-            };
+                product.id = getProductId();
+                product.colors = choosenColor;
+                product.quantity = choosenQuantity;
+                console.log(product);
 
-            let products = JSON.parse(localStorage.getItem("cart"));
+                let products = JSON.parse(localStorage.getItem("cart"));
 
-            if (products) {
-                const isProductInCart = products.find(
-                    (productAlreadyInCart) =>
-                    productAlreadyInCart.id === product.id &&
-                    productAlreadyInCart.colors === product.colors
-                );
-                if (isProductInCart) {
-                    let newQuantityInNumber =
-                        parseInt(isProductInCart.quantity) + parseInt(product.quantity);
-                    newQuantity = newQuantityInNumber.toString();
+                if (products) {
+                    const isProductInCart = products.find(
+                        (productAlreadyInCart) =>
+                        productAlreadyInCart.id === product.id &&
+                        productAlreadyInCart.colors === product.colors
+                    );
+                    if (isProductInCart) {
+                        let newQuantityInNumber =
+                            parseInt(isProductInCart.quantity) + parseInt(product.quantity);
+                        newQuantity = newQuantityInNumber.toString();
 
-                    if (newQuantity <= 100) {
-                        isProductInCart.quantity = newQuantity;
+                        if (newQuantity <= 100) {
+                            isProductInCart.quantity = newQuantity;
+                            localStorage.setItem("cart", JSON.stringify(products));
+                            goToCartPage();
+                        } else {
+                            window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires")
+                        }
+
+                    } else {
+                        products.push(product);
                         localStorage.setItem("cart", JSON.stringify(products));
                         goToCartPage();
-                    } else {
-                        window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires")
                     }
-
                 } else {
+                    products = [];
                     products.push(product);
                     localStorage.setItem("cart", JSON.stringify(products));
                     goToCartPage();
                 }
             } else {
-                products = [];
-                products.push(product);
-                localStorage.setItem("cart", JSON.stringify(products));
-                goToCartPage();
+                window.alert("Le nombre d'articles doit être compris entre 0 et 100.")
             }
         } else {
-            window.alert("Le nombre d'articles doit être compris entre 0 et 100.")
+            window.alert("Choisissez la couleur de l'article.")
         }
     });
 }

@@ -35,21 +35,21 @@ function displayProducts() {
             article.appendChild(cartItemContent);
             cartItemContent.classList.add("cart__item__content");
 
-            const cartItemDescription = document.createElement("div");
-            cartItemContent.appendChild(cartItemDescription);
-            cartItemDescription.classList.add("cart__item__content__description");
+            const cartItemContentDescription = document.createElement("div");
+            cartItemContent.appendChild(cartItemContentDescription);
+            cartItemContentDescription.classList.add("cart__item__content__description");
 
             const articleTitle = document.createElement("h2");
-            cartItemDescription.appendChild(articleTitle);
+            cartItemContentDescription.appendChild(articleTitle);
             articleTitle.textContent = products[cart].name;
 
             const articleColor = document.createElement("p");
-            cartItemDescription.appendChild(articleColor);
+            cartItemContentDescription.appendChild(articleColor);
             articleColor.textContent = products[cart].colors;
 
             const articlePrice = document.createElement("p");
-            cartItemDescription.appendChild(articlePrice);
-            articlePrice.textContent = products[cart].price + "€";
+            cartItemContentDescription.appendChild(articlePrice);
+            articlePrice.textContent = "Prix unitaire : " + products[cart].price + "€";
 
             const cartItemContentSettings = document.createElement("div");
             cartItemContent.appendChild(cartItemContentSettings);
@@ -260,18 +260,12 @@ function sendForm() {
 
         function formValidation() {
 
-            if (
-                formFirstName() === true &&
-                formLastName() === true &&
-                formAddress() === true &&
-                formCity() === true &&
-                formEmail() === true
-            ) {
+            if ( formFirstName() === true && formLastName() === true && formAddress() === true && formCity() === true && formEmail() === true ) {
                 localStorage.setItem("contact", JSON.stringify(contact));
                 return true;
             } else {
                 event.preventDefault();
-                alert("Merci de remplir correctement le formulaire");
+                alert("Veuillez remplir correctement le formulaire.");
             }
         }
         formValidation();
@@ -309,5 +303,5 @@ function sendForm() {
         }
     });
 }
-
 sendForm();
+console.log(orderId);
