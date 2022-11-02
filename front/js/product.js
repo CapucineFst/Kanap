@@ -10,7 +10,7 @@
 
 /** 
  * Fetch the produt with the id found in the function getProductId
- * Run the function dataTreatment when a product is selected
+ * Run the function productData when a product is selected
  */
 function productFetch() {
     const productId = getProductId();
@@ -19,14 +19,13 @@ function productFetch() {
         .then(function(data) {
             const selectedProduct = data;
             if (selectedProduct) {
-                dataTreatment(selectedProduct);
+                productData(selectedProduct);
             }
-        })
+        });
 }
 productFetch();
 
 // Variable we need for the following functions
-const productPicture = document.getElementsByClassName("item__img");
 const productTitle = document.getElementById("title");
 const productPrice = document.getElementById("price");
 const productDescription = document.getElementById("description");
@@ -35,7 +34,7 @@ const productQuantity = document.getElementById("quantity");
 
 // Creation of the object "product" and setting his default parameter
 
-var product = {
+let product = {
     id: 0,
     colors: "",
     quantity: 0,
@@ -52,7 +51,7 @@ var product = {
  * Add the name, price, description, image and altTxt to the object product
  * @param {*} selectedProduct 
  */
-function dataTreatment(selectedProduct) {
+function productData(selectedProduct) {
 
     const productPicture = document.createElement("img");
     document.querySelector(".item__img").appendChild(productPicture);
@@ -63,7 +62,7 @@ function dataTreatment(selectedProduct) {
     productPrice.textContent = selectedProduct.price;
     productDescription.textContent = selectedProduct.description;
 
-    for (i = 0; i < selectedProduct.colors.length; i++) {
+    for (let i = 0; i < selectedProduct.colors.length; i++) {
         const productColor = document.createElement("option");
         document.querySelector("#colors").appendChild(productColor);
         productColor.textContent = selectedProduct.colors[i];
@@ -79,10 +78,45 @@ function dataTreatment(selectedProduct) {
     addToCart();
 
 }
+
+/**
+ * Make sure a color is selected
+ */
+ function correctColor () {
+    if (productColor.value !== "") {
+        return true;
+    }
+    else {
+        window.alert("Veuillez choisir une couleur.");
+    }
+};
+
+/**
+ * Make sure the selected quantity is between 0 and 100
+ */
+function correctQuantity () {
+    if (productQuantity.value > 0 && productQuantity.value <= 100) {
+        return true;
+    }
+    else {
+        window.alert("Le nombre d'articles doit être compris entre 0 et 100.");
+    }
+};
+
+/**
+ * Updates the product once the color and quantity is selected
+ */
+function updateProduct() {
+    let choosenQuantity = productQuantity.value;
+    let choosenColor = productColor.value;
+
+    product.id = getProductId();
+    product.colors = choosenColor;
+    product.quantity = choosenQuantity;
+    console.log(product);
+}
 /** 
  * Give the "Ajouter au panier" button a role
- * Make sure the quantity is between 1 and 100 otherwise display an error message
- * Add the id, colors and quantity to the product
  * Assign the values of the product in the cart
  * In case the product is already in the cart (using the id and the color) we add the quantity but make sure the customers can't put more than a 100 copies in the cart (50 products x3 for example)
  * If the product is not in the cart, we simply add it to the existing cart
@@ -91,55 +125,40 @@ function dataTreatment(selectedProduct) {
  function addToCart() {
     document.getElementById("addToCart").addEventListener("click", (event) => {
         event.preventDefault();
-        if (productColor.value != "") {
-            if (productQuantity.value > 0 && productQuantity.value <= 100) {
-                let choosenQuantity = productQuantity.value;
-                let choosenColor = productColor.value;
+        if (correctColor() == true && correctQuantity() == true){
+            updateProduct();
+            let products = JSON.parse(localStorage.getItem("cart"));
 
-                product.id = getProductId();
-                product.colors = choosenColor;
-                product.quantity = choosenQuantity;
-                console.log(product);
+            if (products) {
+                const isProductInCart = products.find(
+                    (productAlreadyInCart) =>
+                    productAlreadyInCart.id === product.id &&
+                    productAlreadyInCart.colors === product.colors
+                );
+                if (isProductInCart) {
+                    let newQuantityInNumber = parseInt(isProductInCart.quantity) + parseInt(product.quantity);
+                    let newQuantity = newQuantityInNumber.toString();
 
-                let products = JSON.parse(localStorage.getItem("cart"));
-
-                if (products) {
-                    const isProductInCart = products.find(
-                        (productAlreadyInCart) =>
-                        productAlreadyInCart.id === product.id &&
-                        productAlreadyInCart.colors === product.colors
-                    );
-                    if (isProductInCart) {
-                        let newQuantityInNumber =
-                            parseInt(isProductInCart.quantity) + parseInt(product.quantity);
-                        newQuantity = newQuantityInNumber.toString();
-
-                        if (newQuantity <= 100) {
-                            isProductInCart.quantity = newQuantity;
-                            localStorage.setItem("cart", JSON.stringify(products));
-                            goToCartPage();
-                        } else {
-                            window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires")
-                        }
-
-                    } else {
-                        products.push(product);
+                    if (newQuantity <= 100) {
+                        isProductInCart.quantity = newQuantity;
                         localStorage.setItem("cart", JSON.stringify(products));
                         goToCartPage();
+                    } else {
+                        window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
                     }
+
                 } else {
-                    products = [];
                     products.push(product);
                     localStorage.setItem("cart", JSON.stringify(products));
                     goToCartPage();
                 }
             } else {
-                window.alert("Le nombre d'articles doit être compris entre 0 et 100.")
+                products = [];
+                products.push(product);
+                localStorage.setItem("cart", JSON.stringify(products));
+                goToCartPage();
             }
-        } else {
-            window.alert("Choisissez la couleur de l'article.")
-        }
-    });
+    }});
 }
 
 /** 

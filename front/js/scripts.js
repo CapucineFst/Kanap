@@ -9,7 +9,7 @@
         .then((data) => {
             console.log(data);
 
-            for (i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
 
                 const productSection = document.getElementById("items");
 
@@ -34,7 +34,7 @@
                 productCard.appendChild(productDescription);
                 productDescription.textContent = data[i].description;
             }
-        })
+        });
 }
 
 /** 

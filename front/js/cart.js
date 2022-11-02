@@ -61,7 +61,7 @@ function displayProducts() {
 
             const articleQuantity = document.createElement("p");
             cartItemContentSettingsQuantity.appendChild(articleQuantity);
-            articleQuantity.textContent = "Qté : "
+            articleQuantity.textContent = "Qté : ";
 
             const itemQuantity = document.createElement("input");
             cartItemContentSettingsQuantity.appendChild(itemQuantity);
@@ -94,7 +94,7 @@ function totalQuantityProducts() {
     const totalQty = document.getElementsByClassName("itemQuantity");
     let totalQuantity = 0;
 
-    for (cart in products) {
+    for (let cart in products) {
         totalQuantity = totalQuantity + totalQty[cart].valueAsNumber;
     }
 
@@ -108,7 +108,7 @@ function totalQuantityProducts() {
 function totalPriceProducts() {
 
     let totalPrice = 0;
-    for (cart in products) {
+    for (let cart in products) {
         totalPrice = totalPrice + products[cart].price * products[cart].quantity;
     }
     document.getElementById("totalPrice").textContent = totalPrice;
@@ -184,77 +184,68 @@ function sendForm() {
             email: document.getElementById("email").value,
         };
 
-        console.log(contact);
-
         function formFirstName() {
 
             const validFirstName = contact.firstName;
-            let regExpFirstName =
-                /^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validFirstName);
+            let regExpFirstName =/^[^0-9]+$/.test(validFirstName);
             if (regExpFirstName) {
                 document.getElementById("firstNameErrorMsg").textContent = "";
                 return true;
             } else {
                 let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
-                firstNameErrorMsg.textContent =
-                    "Votre prénom doit contenir entre 3 et 20 caractères";
+                firstNameErrorMsg.textContent = "Erreur de saisie dans ce champ";
             }
         }
 
         function formLastName() {
 
             const validLastName = contact.lastName;
-            let regExpLastName =
-                /^[^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{3,20}$/.test(validLastName);
+            let regExpLastName =/^[^0-9]+$/.test(validLastName);
             if (regExpLastName) {
                 document.getElementById("lastNameErrorMsg").textContent = "";
                 return true;
             } else {
                 let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-                lastNameErrorMsg.textContent =
-                    "Votre nom doit contenir entre 3 et 20 caractères";
+                lastNameErrorMsg.textContent = "Erreur de saisie dans ce champ";
             }
         }
 
         function formAddress() {
 
             const validAddress = contact.address;
-            let regExpAddress =
-                /^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+/.test(validAddress);
+            let regExpAddress = /^[a-zA-Z0-9\s,.'-]{3,}$/.test(validAddress);
             if (regExpAddress) {
                 document.getElementById("addressErrorMsg").textContent = "";
                 return true;
             } else {
                 let addressErrorMsg = document.getElementById("addressErrorMsg");
-                addressErrorMsg.textContent = "Votre adresse est invalide.";
+                addressErrorMsg.textContent = "Adresse invalide";
             }
         }
 
         function formCity() {
 
             const validCity = contact.city;
-            let regExpCity =
-                /^[a-zA-Zàâäéèêëïîôöùûüç]+(?:[- ][a-zA-Zàâäéèêëïîôöùûüç]+)*$/.test(validCity);
+            let regExpCity =/^[^0-9]+$/.test(validCity);
             if (regExpCity) {
                 document.getElementById("cityErrorMsg").textContent = "";
                 return true;
             } else {
                 let cityErrorMsg = document.getElementById("cityErrorMsg");
-                cityErrorMsg.textContent = "Votre ville est invalide.";
+                cityErrorMsg.textContent = "Ville invalide";
             }
         }
 
         function formEmail() {
 
             const validEmail = contact.email;
-            let regExpEmail =
-                /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/.test(validEmail);
+            let regExpEmail =/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,10}$/.test(validEmail);
             if (regExpEmail) {
                 document.getElementById("emailErrorMsg").textContent = "";
                 return true;
             } else {
                 let emailErrorMsg = document.getElementById("emailErrorMsg");
-                emailErrorMsg.textContent = "Votre ville est invalide.";
+                emailErrorMsg.textContent = "Email invalide";
             }
         }
 
@@ -304,4 +295,3 @@ function sendForm() {
     });
 }
 sendForm();
-console.log(orderId);
