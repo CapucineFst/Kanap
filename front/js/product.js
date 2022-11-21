@@ -12,27 +12,28 @@
  * Fetch the produt with the id found in the function getProductId
  * Run the function productData when a product is selected
  */
-function productFetch() {
+function productFetch(productElements) {
 	const productId = getProductId();
 	fetch(`http://localhost:3000/api/products/${productId}`)
 		.then((response) => response.json())
 		.then(function(data) {
 			const selectedProduct = data;
 			if (selectedProduct) {
-				productData(selectedProduct);
+				productData(selectedProduct, productElements);
 			}
 		});
 }
 
-// Variable we need for the following functions
-const productTitle = document.getElementById("title");
-const productPrice = document.getElementById("price");
-const productDescription = document.getElementById("description");
-const productColor = document.getElementById("colors");
-const productQuantity = document.getElementById("quantity");
+// Creation of the objet "productElements" and setting his parameters
+/*let productElements = {
+	title: document.getElementById("title"),
+	price: document.getElementById("price"),
+	description: document.getElementById("description"),
+	colors: document.getElementById("colors"),
+	quantity: document.getElementById("quantity")
+}*/
 
-// Creation of the object "product" and setting his default parameter
-
+// Creation of the object "product" and setting his default parameters
 let product = {
 	id: 0,
 	colors: "",
@@ -50,16 +51,16 @@ let product = {
  * Add the name, price, description, image and altTxt to the object product
  * @param {*} selectedProduct 
  */
-function productData(selectedProduct) {
+function productData(selectedProduct, productElements) {
 
 	const productPicture = document.createElement("img");
 	document.querySelector(".item__img").appendChild(productPicture);
 	productPicture.src = selectedProduct.imageUrl;
 	productPicture.alt = selectedProduct.altTxt;
 
-	productTitle.textContent = selectedProduct.name;
-	productPrice.textContent = selectedProduct.price;
-	productDescription.textContent = selectedProduct.description;
+	productElements.title.textContent = selectedProduct.name;
+	productElements.price.textContent = selectedProduct.price;
+	productElements.description.textContent = selectedProduct.description;
 
 	for (let i = 0; i < selectedProduct.colors.length; i++) {
 		const productColor = document.createElement("option");
@@ -80,8 +81,8 @@ function productData(selectedProduct) {
  * Make sure a color is selected
  * @returns {boolean}
  */
-function correctColor() {
-	if (productColor.value !== "") {
+function correctColor(productElements) {
+	if (productElements.colors.value !== "") {
 		return true;
 	} else {
 		window.alert("Veuillez choisir une couleur.");
@@ -93,8 +94,8 @@ function correctColor() {
  * Make sure the selected quantity is between 0 and 100
  * @returns {boolean}
  */
-function correctQuantity() {
-	if (productQuantity.value > 0 && productQuantity.value <= 100) {
+function correctQuantity(productElements) {
+	if (productElements.quantity.value > 0 && productElements.quantity.value <= 100) {
 		return true;
 	} else {
 		window.alert("Le nombre d'articles doit être compris entre 0 et 100.");
@@ -105,66 +106,66 @@ function correctQuantity() {
 /**
  * Updates the product once the color and quantity is selected
  */
-function updateProduct() {
-	let choosenQuantity = productQuantity.value;
-	let choosenColor = productColor.value;
+function updateProduct(productElements) {
+	let choosenQuantity = productElements.quantity.value;
+	let choosenColor = productElements.colors.value;
 
 	product.id = getProductId();
 	product.colors = choosenColor;
 	product.quantity = choosenQuantity;
 	console.log(product);
 }
+
 /** 
- * Assign the values of the product in the cart
- * In case the product is already in the cart (using the id and the color) we add the quantity but make sure the customers can't put more than a 100 copies in the cart (50 products x3 for example)
- * If the product is not in the cart, we simply add it to the existing cart
- * If the cart was empty, we create it and add the product
+ * Verify if a color and a quantity is chosen
+ * Create the place in the cart
+ * Check if the product already exist in the cart (color and id )
+ * If it does just add the new quantity, making sure the customer can't buy more than a hundred
+ * If not, push it to the cart
+ * Display a window asking if the customer want to go to the cart page
  */
+ function addToCart(productElements) {
+    if (!correctColor(productElements) || !correctQuantity(productElements)) {
+        return;    
+    }
+    
+    updateProduct(productElements);
+    let products = JSON.parse(localStorage.getItem("cart"));
 
-function verifyProductData() {
-	if (correctColor() == true && correctQuantity() == true) {
-		updateProduct();
-		let products = JSON.parse(localStorage.getItem("cart"));
+    if (!products) {
+        products = [];
+    }
 
-		if (products) {
-			const isProductInCart = products.find(
-				(productAlreadyInCart) =>
-				productAlreadyInCart.id === product.id &&
-				productAlreadyInCart.colors === product.colors
-			);
-			if (isProductInCart) {
-				let newQuantityInNumber = parseInt(isProductInCart.quantity) + parseInt(product.quantity);
-				let newQuantity = newQuantityInNumber.toString();
+    const productInCart = products.find(
+        (productAlreadyInCart) =>
+        productAlreadyInCart.id === product.id &&
+        productAlreadyInCart.colors === product.colors
+    );
+    if (productInCart) {
+        let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
+        let newQuantity = newQuantityInNumber.toString();
 
-				if (newQuantity <= 100) {
-					isProductInCart.quantity = newQuantity;
-					localStorage.setItem("cart", JSON.stringify(products));
-					goToCartPage();
-				} else {
-					window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
-				}
+        if (newQuantity > 100) {
+            window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
+            return;
+        }
 
-			} else {
-				products.push(product);
-				localStorage.setItem("cart", JSON.stringify(products));
-				goToCartPage();
-			}
-		} else {
-			products = [];
-			products.push(product);
-			localStorage.setItem("cart", JSON.stringify(products));
-			goToCartPage();
-		}
-	}
+        productInCart.quantity = newQuantity;
+    } else {
+        products.push(product);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(products));
+    goToCartPage();
 }
 
 /** 
  * Give the "Ajouter au panier" button a role
  */
-function addToCart() {
+function InitAddToCartButton(productElements) {
 	document.getElementById("addToCart").addEventListener("click", (event) => {
 		event.preventDefault();
-		verifyProductData();
+		addToCart(productElements);
 	});
 }
 
@@ -186,8 +187,15 @@ function goToCartPage() {
  * Function that contains all the other functions
  */
 function DOMLoaded() {
-	productFetch();
-	addToCart();
+	let productElements = {
+		title: document.getElementById("title"),
+		price: document.getElementById("price"),
+		description: document.getElementById("description"),
+		colors: document.getElementById("colors"),
+		quantity: document.getElementById("quantity")
+	}
+	productFetch(productElements);
+	InitAddToCartButton(productElements);
 }
 
 /** 

@@ -3,10 +3,62 @@ let products = JSON.parse(localStorage.getItem("cart"));
 const cartProducts = document.getElementById("cart__items");
 
 /**
+ * Create a div for the picture of the picture and put it in
+ * @param {*} article 
+ * @param {*} cart 
+ */
+function displayProductPicture(article, cart) {
+	const cartItemImg = document.createElement("div");
+	article.appendChild(cartItemImg);
+	cartItemImg.classList.add("cart__item__img");
+
+	const articleImg = document.createElement("img");
+	cartItemImg.appendChild(articleImg);
+	articleImg.setAttribute("src", products[cart].image);
+	articleImg.setAttribute("alt", products[cart].altTxt);
+}
+
+/**
+ * Creat all the elements necessary for the displaying of the quantity
+ * Make sure the customer add the product within the 1-100 range
+ * Add the delete button
+ * @param {*} cartItemContent 
+ * @param {*} cart 
+ */
+function displayProductQuantity (cartItemContent, cart) {
+
+	const cartItemContentSettings = document.createElement("div");
+	cartItemContent.appendChild(cartItemContentSettings);
+	cartItemContentSettings.classList.add("cart__item__content__settings");
+
+	const cartItemContentSettingsQuantity = document.createElement("div");
+	cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
+	cartItemContentSettingsQuantity.classList.add("cart__item__content__settings__quantity");
+
+	const articleQuantity = document.createElement("p");
+	cartItemContentSettingsQuantity.appendChild(articleQuantity);
+	articleQuantity.textContent = "Qté : ";
+	const itemQuantity = document.createElement("input");
+	cartItemContentSettingsQuantity.appendChild(itemQuantity);
+	itemQuantity.classList.add("itemQuantity");
+	itemQuantity.value = products[cart].quantity;
+	itemQuantity.setAttribute("type", "number");
+	itemQuantity.setAttribute("min", "1");
+	itemQuantity.setAttribute("max", "100");
+	itemQuantity.setAttribute("name", "itemQuantity");
+
+	const cartItemContentSettingsDelete = document.createElement("div");
+	cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
+	cartItemContentSettingsDelete.classList.add("cart__item__content__settings__delete");
+	const deleteItem = document.createElement("p");
+	cartItemContentSettingsDelete.appendChild(deleteItem);
+	deleteItem.classList.add("deleteItem");
+	deleteItem.textContent = "Supprimer";
+}
+/**
  * Check if the cart is empty or not
  * If it's not empty the function proceed
  * Create an element article
- * Create a div for the picture and put it in
  * Create elements for the content and put the title, the name and the price 
  * Create a paragraph for the quantity (which can be modified with another function) and make sure the quantity stays within the 1 to a 100 interval
  * Add a delete button (which works with another function)
@@ -18,19 +70,10 @@ function displayProducts() {
 	} else {
 		for (let cart in products) {
 			const article = document.createElement("article");
-			let dataId = document.getElementsByClassName("data-id");
 			cartProducts.appendChild(article);
-			article.classList.add("cart__item", "data-id");
-			dataId = article.setAttribute("data-id", products[cart].id);
+			article.classList.add("cart__item");
 
-			const cartItemImg = document.createElement("div");
-			article.appendChild(cartItemImg);
-			cartItemImg.classList.add("cart__item__img");
-
-			const articleImg = document.createElement("img");
-			cartItemImg.appendChild(articleImg);
-			articleImg.setAttribute("src", products[cart].image);
-			articleImg.setAttribute("alt", products[cart].altTxt);
+			displayProductPicture(article, cart);
 
 			const cartItemContent = document.createElement("div");
 			article.appendChild(cartItemContent);
@@ -52,36 +95,7 @@ function displayProducts() {
 			cartItemContentDescription.appendChild(articlePrice);
 			articlePrice.textContent = "Prix unitaire : " + products[cart].price + "€";
 
-			const cartItemContentSettings = document.createElement("div");
-			cartItemContent.appendChild(cartItemContentSettings);
-			cartItemContentSettings.classList.add("cart__item__content__settings");
-
-			const cartItemContentSettingsQuantity = document.createElement("div");
-			cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
-			cartItemContentSettingsQuantity.classList.add("cart__item__content__settings__quantity");
-
-			const articleQuantity = document.createElement("p");
-			cartItemContentSettingsQuantity.appendChild(articleQuantity);
-			articleQuantity.textContent = "Qté : ";
-
-			const itemQuantity = document.createElement("input");
-			cartItemContentSettingsQuantity.appendChild(itemQuantity);
-			itemQuantity.classList.add("itemQuantity");
-			itemQuantity.value = products[cart].quantity;
-			itemQuantity.setAttribute("type", "number");
-			itemQuantity.setAttribute("min", "1");
-			itemQuantity.setAttribute("max", "100");
-			itemQuantity.setAttribute("name", "itemQuantity");
-
-			const cartItemContentSettingsDelete = document.createElement("div");
-			cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
-			cartItemContentSettingsDelete.classList.add("cart__item__content__settings__delete");
-
-			const deleteItem = document.createElement("p");
-			cartItemContentSettingsDelete.appendChild(deleteItem);
-			deleteItem.classList.add("deleteItem");
-			deleteItem.textContent = "Supprimer";
-
+			displayProductQuantity(cartItemContent, cart);
 		}
 	}
 }
@@ -161,8 +175,7 @@ function deleteProduct() {
 /**
  * Create an object "contact" with the values filled by the user in the form
  * Create an object noNumberRegExp to check some of the inputs
- * If the form is correctly filled, it will create an item contact in the local storage
- * Array from the local storage to send it to the server
+ * Create an array "products" containing only the id of the products in the cart
  * Create an object order with the info of contact and products
  * Redirection to the confirmation page
  */
@@ -262,47 +275,52 @@ function sendForm() {
 			return false;
 		}
 
+		/**
+		 * Check if the form in it's entirety is correctly filled
+		 * If it is, it creates an object contact in the local storage, otherwise, it display an error message
+		 * @returns {boolean}
+		 */
 		function formValidation() {
 
-			if (formFirstName() === true && formLastName() === true && formAddress() === true && formCity() === true && formEmail() === true) {
+			if (formFirstName() && formLastName() && formAddress() && formCity() && formEmail()) {
 				localStorage.setItem("contact", JSON.stringify(contact));
 				return true;
 			} else {
 				event.preventDefault();
 				alert("Veuillez remplir correctement le formulaire.");
+				return false;
 			}
 		}
-		formValidation();
 
 		let products = [];
 		for (let i = 0; i < products.length; i++) {
 			products.push(products[i].id);
 		}
 
-		if (formValidation() === true) {
-			const order = {
-				contact,
-				products,
-			};
-
-			fetch("http://localhost:3000/api/products/order", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(order),
-				})
-				.then((response) => response.json())
-				.then((data) => {
-					console.log(data);
-					localStorage.clear();
-					localStorage.setItem("orderId", data.orderId);
-					document.location.href = "confirmation.html";
-				})
-				.catch((error) => console.log(error));
-		} else {
-			event.preventDefault();
+		if (!formValidation()) {
+			return;
 		}
+		else {
+			const order = {
+			contact,
+			products,
+		};
+
+		fetch("http://localhost:3000/api/products/order", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(order),
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+				localStorage.clear();
+				localStorage.setItem("orderId", data.orderId);
+				document.location.href = "confirmation.html";
+			})
+			.catch((error) => console.log(error));}
 	});
 }
 
