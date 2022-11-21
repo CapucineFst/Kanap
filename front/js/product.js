@@ -124,39 +124,39 @@ function updateProduct(productElements) {
  * If not, push it to the cart
  * Display a window asking if the customer want to go to the cart page
  */
- function addToCart(productElements) {
-    if (!correctColor(productElements) || !correctQuantity(productElements)) {
-        return;    
-    }
-    
-    updateProduct(productElements);
-    let products = JSON.parse(localStorage.getItem("cart"));
+function addToCart(productElements) {
+	if (!correctColor(productElements) || !correctQuantity(productElements)) {
+		return;
+	}
 
-    if (!products) {
-        products = [];
-    }
+	updateProduct(productElements);
+	let products = JSON.parse(localStorage.getItem("cart"));
 
-    const productInCart = products.find(
-        (productAlreadyInCart) =>
-        productAlreadyInCart.id === product.id &&
-        productAlreadyInCart.colors === product.colors
-    );
-    if (productInCart) {
-        let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
-        let newQuantity = newQuantityInNumber.toString();
+	if (!products) {
+		products = [];
+	}
 
-        if (newQuantity > 100) {
-            window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
-            return;
-        }
+	const productInCart = products.find(
+		(productAlreadyInCart) =>
+		productAlreadyInCart.id === product.id &&
+		productAlreadyInCart.colors === product.colors
+	);
+	if (productInCart) {
+		let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
+		let newQuantity = newQuantityInNumber.toString();
 
-        productInCart.quantity = newQuantity;
-    } else {
-        products.push(product);
-    }
+		if (newQuantity > 100) {
+			window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
+			return;
+		}
 
-    localStorage.setItem("cart", JSON.stringify(products));
-    goToCartPage();
+		productInCart.quantity = newQuantity;
+	} else {
+		products.push(product);
+	}
+
+	localStorage.setItem("cart", JSON.stringify(products));
+	goToCartPage();
 }
 
 /** 
@@ -193,7 +193,7 @@ function DOMLoaded() {
 		description: document.getElementById("description"),
 		colors: document.getElementById("colors"),
 		quantity: document.getElementById("quantity")
-	}
+	};
 	productFetch(productElements);
 	InitAddToCartButton(productElements);
 }
