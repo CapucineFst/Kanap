@@ -3,10 +3,9 @@
  * Clear local storage for security
  */
  function orderConfirmation() {
-
-	const idOrder = document.getElementById("orderId");
-	idOrder.textContent = localStorage.getItem("orderId");
-	localStorage.clear();
+    const idOrder = document.getElementById("orderId");
+    idOrder.textContent = localStorage.getItem("orderId");
+    localStorage.clear();
 }
 
 /** 

@@ -36,11 +36,12 @@ let product = {
 };
 
 /**
- *Create an element image and put the picture of the product in it
+ * Create an element image and put the picture of the product in it
  * Add product name, price, description, image and altTxt
  * Create an element option and put the available colors in it
  * Add the name, price, description, image and altTxt to the object product
  * @param {*} selectedProduct 
+ * @param {*} productElements
  */
 function UpdateProductInPage(selectedProduct, productElements) {
 
@@ -57,7 +58,6 @@ function UpdateProductInPage(selectedProduct, productElements) {
         const productColor = document.createElement("option");
         document.querySelector("#colors").appendChild(productColor);
         productColor.textContent = selectedProduct.colors[i];
-        console.log(productColor);
     }
 
     product.image = selectedProduct.imageUrl;
@@ -104,15 +104,14 @@ function updateProduct(productElements) {
     product.id = getProductId();
     product.colors = choosenColor;
     product.quantity = choosenQuantity;
-    console.log(product);
 }
 
 /** 
  * Verify if a color and a quantity is chosen
  * Create the place in the cart
- * Check if the product already exist in the cart (color and id )
- * If it does just add the new quantity, making sure the customer can't buy more than a hundred
- * If not, push it to the cart
+ * Check if the cart is empty
+ * If it is, create the array containing the product info
+ * Check if the product is already in the cart, if it is just add the new quantity, making sure the customer can't buy more than a hundred. If not, push it to the cart.
  * Display a window asking if the customer want to go to the cart page
  */
 function addToCart(productElements) {

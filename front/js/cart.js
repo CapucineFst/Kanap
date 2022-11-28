@@ -1,8 +1,8 @@
 /**
  * Create a div for the picture of the picture and put it in
  * @param {HTMLElement} article 
- * @param {*} productsInCart
- * @param {*} cart 
+ * @param {String} productsInCart
+ * @param {String} cart 
  */
 function displayProductPicture(article, productsInCart, cart) {
 	const cartItemImg = document.createElement("div");
@@ -58,8 +58,6 @@ function displayProductQuantity (cartItemContent, productsInCart, cart) {
  * If it's not empty the function proceed
  * Create an element article
  * Create elements for the content and put the title, the name and the price 
- * Create a paragraph for the quantity (which can be modified with another function) and make sure the quantity stays within the 1 to a 100 interval
- * Add a delete button (which works with another function)
  */
 function displayProducts(productsInCart, cartProducts) {
 	if (productsInCart === null || productsInCart == 0) {
@@ -322,7 +320,6 @@ function sendForm(productsInCart) {
  */
 function DOMLoaded() {
 	let productsInCart = JSON.parse(localStorage.getItem("cart"));
-	console.log(productsInCart);
 	const cartProducts = document.getElementById("cart__items");
 	displayProducts(productsInCart, cartProducts);
 	totalQuantityProducts(productsInCart);
