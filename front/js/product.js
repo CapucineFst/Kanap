@@ -11,6 +11,7 @@
 /** 
  * Fetch the produt with the id found in the function getProductId
  * Run the function UpdateProductInPage when a product is selected
+ * @param {Object} productElements
  */
 function productFetch(productElements) {
     const productId = getProductId();
@@ -40,8 +41,8 @@ let product = {
  * Add product name, price, description, image and altTxt
  * Create an element option and put the available colors in it
  * Add the name, price, description, image and altTxt to the object product
- * @param {*} selectedProduct 
- * @param {*} productElements
+ * @param {Object} selectedProduct 
+ * @param {Object} productElements
  */
 function UpdateProductInPage(selectedProduct, productElements) {
 
@@ -70,6 +71,7 @@ function UpdateProductInPage(selectedProduct, productElements) {
 
 /**
  * Make sure a color is selected
+ * @param {Object} productElements
  * @returns {boolean}
  */
 function correctColor(productElements) {
@@ -83,6 +85,7 @@ function correctColor(productElements) {
 
 /**
  * Make sure the selected quantity is between 0 and 100
+ * @param {Object} productElements
  * @returns {boolean}
  */
 function correctQuantity(productElements) {
@@ -96,6 +99,7 @@ function correctQuantity(productElements) {
 
 /**
  * Updates the product once the color and quantity is selected
+ * @param {Object} productElements
  */
 function updateProduct(productElements) {
     let choosenQuantity = productElements.quantity.value;
@@ -113,6 +117,7 @@ function updateProduct(productElements) {
  * If it is, create the array containing the product info
  * Check if the product is already in the cart, if it is just add the new quantity, making sure the customer can't buy more than a hundred. If not, push it to the cart.
  * Display a window asking if the customer want to go to the cart page
+ * @param {Object} productElements
  */
 function addToCart(productElements) {
     if (!correctColor(productElements) || !correctQuantity(productElements)) {
@@ -151,6 +156,7 @@ function addToCart(productElements) {
 
 /** 
  * Give the "Ajouter au panier" button a role
+ * @param {Object} productElements
  */
 function InitAddToCartButton(productElements) {
     document.getElementById("addToCart").addEventListener("click", (event) => {

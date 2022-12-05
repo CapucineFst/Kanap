@@ -1,7 +1,7 @@
 /**
  * Create a div for the picture of the picture and put it in
  * @param {HTMLElement} article 
- * @param {String} productsInCart
+ * @param {Array} productsInCart
  * @param {String} cart 
  */
 function displayProductPicture(article, productsInCart, cart) {
@@ -20,7 +20,7 @@ function displayProductPicture(article, productsInCart, cart) {
  * Make sure the customer add the product within the 1-100 range
  * Add the delete button
  * @param {HTMLElement} cartItemContent 
- * @param {String} productsInCart
+ * @param {Array} productsInCart
  * @param {String} cart 
  */
 function displayProductQuantity (cartItemContent, productsInCart, cart) {
@@ -58,6 +58,8 @@ function displayProductQuantity (cartItemContent, productsInCart, cart) {
  * If it's not empty the function proceed
  * Create an element article
  * Create elements for the content and put the title, the name and the price 
+ * @param {Array} productsInCart
+ * @param {HTMLElement} cartProducts
  */
 function displayProducts(productsInCart, cartProducts) {
 	if (productsInCart === null || productsInCart == 0) {
@@ -98,6 +100,7 @@ function displayProducts(productsInCart, cartProducts) {
 
 /**
  * Get the total quantity of the products and then display it
+ * @param {Array} productsInCart
  */
 function totalQuantityProducts(productsInCart) {
 
@@ -114,6 +117,7 @@ function totalQuantityProducts(productsInCart) {
 
 /**
  * Get the total price of the products and then display it
+ * @param {Array} productsInCart
  */
 function totalPriceProducts(productsInCart) {
 
@@ -127,6 +131,7 @@ function totalPriceProducts(productsInCart) {
 /**
  * Modify the quantity of the products in the local storage
  * Update the total price and quantity
+ * @param {Array} productsInCart
  */
 function modifyQuantityUpdatePrice(productsInCart) {
 
@@ -144,22 +149,18 @@ function modifyQuantityUpdatePrice(productsInCart) {
 /**
  * Give a role to the "Supprimer" button
  * Make sure we delete the specific product with the color the customer want to delete
+ * @param {Array} productsInCart
  */
 function deleteProduct(productsInCart) {
 
 	let deleteButton = document.getElementsByClassName("deleteItem");
 
 	for (let i = 0; i < deleteButton.length; i++) {
-
 		deleteButton[i].addEventListener("click", (event) => {
 			event.preventDefault();
-
 			let deletingProduct = productsInCart[i].colors;
-
 			productsInCart = productsInCart.filter((product) => product.colors !== deletingProduct);
-
 			localStorage.setItem("cart", JSON.stringify(productsInCart));
-
 			alert("Ce produit va être définitivement supprimé de votre panier. Pour confirmer, cliquez sur OK.");
 			location.reload();
 		});
@@ -172,6 +173,7 @@ function deleteProduct(productsInCart) {
  * Create an array "products" containing only the id of the products in the cart
  * Create an object order with the info of contact and products
  * Redirection to the confirmation page
+ * @param {Array} productsInCart
  */
 function sendForm(productsInCart) {
 
