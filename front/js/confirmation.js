@@ -1,11 +1,19 @@
 /**
- * Give the id of the order to the client
- * Clear local storage for security
+ * Get the id of the order using the URL
+ * @returns {String}
  */
- function orderConfirmation() {
+function getOrderId () {
+    const url = new URL(window.location.href);
+    const urlParams = new URLSearchParams(url.search);
+    const orderID = urlParams.get("orderId");
+    return orderID;
+}
+/**
+ * Give the id of the order to the client using the function above
+ */
+function orderConfirmation() {
     const idOrder = document.getElementById("orderId");
-    idOrder.textContent = localStorage.getItem("orderId");
-    localStorage.clear();
+    idOrder.textContent = getOrderId();
 }
 
 /** 

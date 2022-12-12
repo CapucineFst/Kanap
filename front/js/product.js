@@ -1,5 +1,6 @@
 /**  
  * Extract the id of the product from the URL 
+ * @returns {String}
  */
  function getProductId() {
     const url = new URL(window.location.href);
@@ -29,11 +30,7 @@ function productFetch(productElements) {
 let product = {
     id: 0,
     colors: "",
-    quantity: 0,
-    name: "",
-    price: "",
-    image: "",
-    altTxt: ""
+    quantity: 0
 };
 
 /**
@@ -60,12 +57,6 @@ function UpdateProductInPage(selectedProduct, productElements) {
         document.querySelector("#colors").appendChild(productColor);
         productColor.textContent = selectedProduct.colors[i];
     }
-
-    product.image = selectedProduct.imageUrl;
-    product.altTxt = selectedProduct.altTxt;
-    product.name = selectedProduct.name;
-    product.price = selectedProduct.price;
-    product.description = selectedProduct.description;
 
 }
 
