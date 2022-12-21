@@ -1,10 +1,13 @@
 function APIFetch (productsInCart) {
-	fetch('http://localhost:3000/api/products')
+		return fetch('http://localhost:3000/api/products')
 		.then((response) => response.json())
 		.then((data) => {
 			const cartIds = productsInCart.map((p) => p.id);
 			const allProductInfo = data.filter((p) => cartIds.indexOf(p._id) != -1);
-});
+			let filteredProducts= {};
+			allProductInfo.forEach(p => {filteredProducts[p._id] = p});
+			return filteredProducts;
+	});
 }
 
 /**
@@ -13,15 +16,15 @@ function APIFetch (productsInCart) {
  * @param {Array} allProductInfo
  * @param {Int} i 
  */
-function displayProductPicture(article, allProductInfo, i) {
+function displayProductPicture(article, APIProduct) {
 	const cartItemImg = document.createElement("div");
 	article.appendChild(cartItemImg);
 	cartItemImg.classList.add("cart__item__img");
 
 	const articleImg = document.createElement("img");
 	cartItemImg.appendChild(articleImg);
-	articleImg.setAttribute("src", allProductInfo[i].imageUrl);
-	articleImg.setAttribute("alt", allProductInfo[i].altTxt);
+	articleImg.setAttribute("src", APIProduct.imageUrl);
+	articleImg.setAttribute("alt",APIProduct.altTxt);
 }
 
 /**
@@ -33,7 +36,7 @@ function displayProductPicture(article, allProductInfo, i) {
  * @param {Array} allProductInfo 
  * @param {Int} i
  */
-function displayProductQuantity (cartItemContent, cartInfos, allProductInfo, i) {
+function displayProductQuantity (cartItemContent, shoppingCartProduct) {
 	const cartItemContentSettings = document.createElement("div");
 	cartItemContent.appendChild(cartItemContentSettings);
 	cartItemContentSettings.classList.add("cart__item__content__settings");
@@ -48,7 +51,7 @@ function displayProductQuantity (cartItemContent, cartInfos, allProductInfo, i) 
 	const itemQuantity = document.createElement("input");
 	cartItemContentSettingsQuantity.appendChild(itemQuantity);
 	itemQuantity.classList.add("itemQuantity");
-	itemQuantity.value = cartInfos[allProductInfo[i]._id].quantity;
+	itemQuantity.value = shoppingCartProduct.quantity;
 	itemQuantity.setAttribute("type", "number");
 	itemQuantity.setAttribute("min", "1");
 	itemQuantity.setAttribute("max", "100");
@@ -79,21 +82,6 @@ function sortArrayProductsInCart (productsInCart) {
 }
 
 /**
- * Sort the array allProductsInfo by id 
- * @param {Array} allProductInfo 
- */
-function sortArrayAllProductInfo (allProductInfo) {
-	allProductInfo.sort(function (c, d) {
-		if (c._id < d._id) {
-			return -1;
-		} 
-		else {
-			return 1;
-		};
-	});
-}
-
-/**
  * Check if the cart is empty or not
  * If it's not empty the function proceed
  * Create an element article
@@ -107,31 +95,22 @@ function displayProducts (productsInCart, cartProducts) {
 		cartProducts.textContent = emptyCart;
 	}
 	else {
-	fetch('http://localhost:3000/api/products')
-		.then((response) => response.json())
-		.then((data) => {
-			const cartIds = productsInCart.map((p) => p.id);
-			let allProductInfo = data.filter((p) => cartIds.indexOf(p._id) != -1);
-			let cartInfos = {};
-			productsInCart.forEach(p => {cartInfos[p.id] = p});
-
-			/*code rajouté trier tableau*/
+		APIFetch (productsInCart)
+		.then((filteredProducts) => {
 	
 			sortArrayProductsInCart(productsInCart);
-			sortArrayAllProductInfo(allProductInfo);
-
-			/* fin code rajoute*/
-			console.log(cartInfos)
-			console.log(allProductInfo)
-			console.log(productsInCart)
 
 			for (let i = 0; i < productsInCart.length; i++) {
+
+				const shoppingCartProduct = productsInCart[i];
+				const APIProduct = filteredProducts[productsInCart[i].id];
+
 
 				const article = document.createElement("article");
 				cartProducts.appendChild(article);
 				article.classList.add("cart__item");
 
-				displayProductPicture(article, allProductInfo, i);
+				displayProductPicture(article, APIProduct);
 
 				const cartItemContent = document.createElement("div");
 				article.appendChild(cartItemContent);
@@ -143,17 +122,17 @@ function displayProducts (productsInCart, cartProducts) {
 
 				const articleTitle = document.createElement("h2");
 				cartItemContentDescription.appendChild(articleTitle);
-				articleTitle.textContent = allProductInfo[i].name;
+				articleTitle.textContent = APIProduct.name;
 
 				const articleColor = document.createElement("p");
 				cartItemContentDescription.appendChild(articleColor);
-				articleColor.textContent = cartInfos[allProductInfo[i]._id].colors;
+				articleColor.textContent = shoppingCartProduct.colors;
 
 				const articlePrice = document.createElement("p");
 				cartItemContentDescription.appendChild(articlePrice);
-				articlePrice.textContent = "Prix unitaire : " + allProductInfo[i].price + "€";
+				articlePrice.textContent = "Prix unitaire : " + APIProduct.price + "€";
 
-				displayProductQuantity(cartItemContent, cartInfos, allProductInfo, i);
+				displayProductQuantity (cartItemContent, shoppingCartProduct);
 
 
 }})};
@@ -170,7 +149,6 @@ function totalQuantityProducts(productsInCart) {
 		totalQuantity = 0;
 	}
 	else {
-	//const totalQty = document.getElementsByClassName("itemQuantity");
 		for (let t = 0; t < productsInCart.length; t++) {
 			totalQuantity = totalQuantity + Number(productsInCart[t].quantity);
 		}
@@ -192,18 +170,13 @@ function totalPriceProducts(productsInCart) {
 		document.getElementById("totalPrice").textContent = totalPrice;
 	}
 	else {
-		fetch('http://localhost:3000/api/products')
-		.then((response) => response.json())
-		.then((data) => {
-			const cartIds = productsInCart.map((p) => p.id);
-			const allProductInfo = data.filter((p) => cartIds.indexOf(p._id) != -1);
-			//APIFetch(productsInCart);
+		APIFetch (productsInCart)
+		.then((filteredProducts) => {
 
 			sortArrayProductsInCart(productsInCart);
-			sortArrayAllProductInfo(allProductInfo);
 										
-			for (let t = 0; t < productsInCart.length; t++) {
-				totalPrice = totalPrice + Number(allProductInfo[t].price) * Number(productsInCart[t].quantity);
+			for (let i = 0; i < productsInCart.length; i++) {
+				totalPrice = totalPrice + Number(filteredProducts[productsInCart[i].id].price) * Number(productsInCart[i].quantity);
 			}
 			document.getElementById("totalPrice").textContent = totalPrice;
 		})};
@@ -222,7 +195,6 @@ function modifyQuantityUpdatePrice(productsInCart) {
 
 	for (let t = 0; t < itemQuantity.length; t++) {
 		itemQuantity[t].addEventListener("change", function() {
-			console.log(itemQuantity[t].value)
 			productsInCart[t].quantity = itemQuantity[t].value;
 			localStorage.setItem("cart", JSON.stringify(productsInCart));
 			totalPriceProducts(productsInCart);
@@ -240,12 +212,10 @@ function deleteProduct(productsInCart) {
 
 	let deleteButton = document.getElementsByClassName("deleteItem");
 
-	console.log(deleteButton)
 	for (let i = 0; i < deleteButton.length; i++) {
 		deleteButton[i].addEventListener("click", (event) => {
 			event.preventDefault();
 			let deletingProduct = productsInCart[i].colors;
-			console.log(deletingProduct)
 			productsInCart = productsInCart.filter((product) => product.colors !== deletingProduct);
 			localStorage.setItem("cart", JSON.stringify(productsInCart));
 			alert("Ce produit va être définitivement supprimé de votre panier. Pour confirmer, cliquez sur OK.");
@@ -404,10 +374,10 @@ function sendForm(productsInCart) {
 /**
  * Function that contains all the other functions
  */
-function DOMLoaded(cart) {
+function DOMLoaded() {
 	let productsInCart = JSON.parse(localStorage.getItem("cart"));
 	const cartProducts = document.getElementById("cart__items");
-	displayProducts(productsInCart, cartProducts, cart);
+	displayProducts (productsInCart, cartProducts);
 	totalQuantityProducts(productsInCart);
 	totalPriceProducts(productsInCart);
 	modifyQuantityUpdatePrice(productsInCart);
