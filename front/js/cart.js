@@ -69,7 +69,7 @@ function displayProductQuantity (cartItemContent, shoppingCartProduct) {
 /**
  * Sort the array productsInCart by id 
  * @param {Array} productsInCart 
- */
+ 
 function sortArrayProductsInCart (productsInCart) {
 	productsInCart.sort(function (a, b) {
 		if (a.id < b.id) {
@@ -79,7 +79,7 @@ function sortArrayProductsInCart (productsInCart) {
 			return 1;
 		};
 	});
-}
+}*/
 
 /**
  * Check if the cart is empty or not
@@ -97,9 +97,7 @@ function displayProducts (productsInCart, cartProducts) {
 	else {
 		APIFetch (productsInCart)
 		.then((filteredProducts) => {
-	
-			sortArrayProductsInCart(productsInCart);
-
+			
 			for (let i = 0; i < productsInCart.length; i++) {
 
 				const shoppingCartProduct = productsInCart[i];
@@ -130,7 +128,7 @@ function displayProducts (productsInCart, cartProducts) {
 
 				const articlePrice = document.createElement("p");
 				cartItemContentDescription.appendChild(articlePrice);
-				articlePrice.textContent = "Prix unitaire : " + APIProduct.price + "€";
+				articlePrice.textContent = "Prix unitaire : " + APIProduct.price.toLocaleString() + "€";
 
 				displayProductQuantity (cartItemContent, shoppingCartProduct);
 
@@ -153,7 +151,7 @@ function totalQuantityProducts(productsInCart) {
 			totalQuantity = totalQuantity + Number(productsInCart[t].quantity);
 		}
 	}
-	document.getElementById("totalQuantity").textContent = totalQuantity;
+	document.getElementById("totalQuantity").textContent = totalQuantity.toLocaleString();
 
 }
 
@@ -166,19 +164,17 @@ function totalPriceProducts(productsInCart) {
 	let totalPrice = 0;
 
 	if (productsInCart == null) {
-		totalPrice = 0;
 		document.getElementById("totalPrice").textContent = totalPrice;
 	}
 	else {
 		APIFetch (productsInCart)
 		.then((filteredProducts) => {
 
-			sortArrayProductsInCart(productsInCart);
 										
 			for (let i = 0; i < productsInCart.length; i++) {
 				totalPrice = totalPrice + Number(filteredProducts[productsInCart[i].id].price) * Number(productsInCart[i].quantity);
 			}
-			document.getElementById("totalPrice").textContent = totalPrice;
+			document.getElementById("totalPrice").textContent = totalPrice.toLocaleString();
 		})};
 
 	}
@@ -193,15 +189,17 @@ function modifyQuantityUpdatePrice(productsInCart) {
 
 	let itemQuantity = document.getElementsByClassName("itemQuantity");
 
-	for (let t = 0; t < itemQuantity.length; t++) {
-		itemQuantity[t].addEventListener("change", function() {
-			productsInCart[t].quantity = itemQuantity[t].value;
+	for (let i = 0; i < itemQuantity.length; i++) {
+		itemQuantity[i].addEventListener("change", (event) => {
+			event.preventDefault();
+			productsInCart[i].quantity = itemQuantity[i].value;
 			localStorage.setItem("cart", JSON.stringify(productsInCart));
 			totalPriceProducts(productsInCart);
 			totalQuantityProducts(productsInCart);
 		});
 	}
 }
+
 
 /**
  * Give a role to the "Supprimer" button
@@ -219,7 +217,7 @@ function deleteProduct(productsInCart) {
 			productsInCart = productsInCart.filter((product) => product.colors !== deletingProduct);
 			localStorage.setItem("cart", JSON.stringify(productsInCart));
 			alert("Ce produit va être définitivement supprimé de votre panier. Pour confirmer, cliquez sur OK.");
-			location.reload();
+			window.location.reload();
 		});
 	}
 }
@@ -388,5 +386,5 @@ function DOMLoaded() {
 /** 
  * Starting the function when the DOM is fully loaded 
  */
-window.addEventListener('DOMContentLoaded', DOMLoaded);
+window.addEventListener("DOMContentLoaded", DOMLoaded);
 

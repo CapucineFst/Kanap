@@ -19,4 +19,4 @@ function orderConfirmation() {
 /** 
  * Starting the function when the DOM is fully loaded 
  */
-window.addEventListener('DOMContentLoaded', orderConfirmation);
+window.addEventListener("DOMContentLoaded", orderConfirmation);

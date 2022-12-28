@@ -49,7 +49,7 @@ function UpdateProductInPage(selectedProduct, productElements) {
     productPicture.alt = selectedProduct.altTxt;
 
     productElements.title.textContent = selectedProduct.name;
-    productElements.price.textContent = selectedProduct.price;
+    productElements.price.textContent = selectedProduct.price.toLocaleString();
     productElements.description.textContent = selectedProduct.description;
 
     for (let i = 0; i < selectedProduct.colors.length; i++) {
@@ -188,4 +188,4 @@ function DOMLoaded() {
 /** 
  * Starting the function when the DOM is fully loaded 
  */
-window.addEventListener('DOMContentLoaded', DOMLoaded);
+window.addEventListener("DOMContentLoaded", DOMLoaded);

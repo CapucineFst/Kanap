@@ -39,4 +39,4 @@
 /** 
  * Starting the function when the DOM is fully loaded 
  */
-window.addEventListener('DOMContentLoaded', cardsFetch);
+window.addEventListener("DOMContentLoaded", cardsFetch);
