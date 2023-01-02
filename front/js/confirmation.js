@@ -2,7 +2,7 @@
  * Get the id of the order using the URL
  * @returns {String}
  */
-function getOrderId () {
+function getOrderId() {
     const url = new URL(window.location.href);
     const urlParams = new URLSearchParams(url.search);
     const orderID = urlParams.get("orderId");

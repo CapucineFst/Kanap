@@ -2,7 +2,7 @@
  * Extract the id of the product from the URL 
  * @returns {String}
  */
- function getProductId() {
+function getProductId() {
     const url = new URL(window.location.href);
     const urlParams = new URLSearchParams(url.search);
     const productId = urlParams.get("id");
@@ -171,7 +171,7 @@ function goToCartPage() {
 }
 
 /**
- * Function that contains all the other functions
+ * Function that contains all the functions that need for the DOM to be ready before starting
  */
 function DOMLoaded() {
     const productElements = {
