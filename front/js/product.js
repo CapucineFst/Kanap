@@ -3,34 +3,34 @@
  * @returns {String}
  */
 function getProductId() {
-    const url = new URL(window.location.href);
-    const urlParams = new URLSearchParams(url.search);
-    const productId = urlParams.get("id");
-    return productId;
+	const url = new URL(window.location.href);
+	const urlParams = new URLSearchParams(url.search);
+	const productId = urlParams.get("id");
+	return productId;
 }
 
 /** 
  * Fetch the produt with the id found in the function getProductId
- * Run the function UpdateProductInPage when a product is selected
+ * Run the function updateProductInPage when a product is selected
  * @param {Object} productElements
  */
 function productFetch(productElements) {
-    const productId = getProductId();
-    fetch(`http://localhost:3000/api/products/${productId}`)
-        .then((response) => response.json())
-        .then(function(selectedProduct) {
-            if (!selectedProduct) {
-                return;
-            }
-            UpdateProductInPage(selectedProduct, productElements);
-        });
+	const productId = getProductId();
+	fetch(`http://localhost:3000/api/products/${productId}`)
+		.then((response) => response.json())
+		.then(function(selectedProduct) {
+			if (!selectedProduct) {
+				return;
+			}
+			updateProductInPage(selectedProduct, productElements);
+		});
 }
 
 // Creation of the object "product" and setting his default parameters
 let product = {
-    id: 0,
-    colors: "",
-    quantity: 0
+	id: 0,
+	colors: "",
+	quantity: 0
 };
 
 /**
@@ -41,22 +41,22 @@ let product = {
  * @param {Object} selectedProduct 
  * @param {Object} productElements
  */
-function UpdateProductInPage(selectedProduct, productElements) {
+function updateProductInPage(selectedProduct, productElements) {
 
-    const productPicture = document.createElement("img");
-    document.querySelector(".item__img").appendChild(productPicture);
-    productPicture.src = selectedProduct.imageUrl;
-    productPicture.alt = selectedProduct.altTxt;
+	const productPicture = document.createElement("img");
+	document.querySelector(".item__img").appendChild(productPicture);
+	productPicture.src = selectedProduct.imageUrl;
+	productPicture.alt = selectedProduct.altTxt;
 
-    productElements.title.textContent = selectedProduct.name;
-    productElements.price.textContent = selectedProduct.price.toLocaleString();
-    productElements.description.textContent = selectedProduct.description;
+	productElements.title.textContent = selectedProduct.name;
+	productElements.price.textContent = selectedProduct.price.toLocaleString();
+	productElements.description.textContent = selectedProduct.description;
 
-    for (let i = 0; i < selectedProduct.colors.length; i++) {
-        const productColor = document.createElement("option");
-        document.querySelector("#colors").appendChild(productColor);
-        productColor.textContent = selectedProduct.colors[i];
-    }
+	for (let i = 0; i < selectedProduct.colors.length; i++) {
+		const productColor = document.createElement("option");
+		document.querySelector("#colors").appendChild(productColor);
+		productColor.textContent = selectedProduct.colors[i];
+	}
 
 }
 
@@ -66,12 +66,12 @@ function UpdateProductInPage(selectedProduct, productElements) {
  * @returns {boolean}
  */
 function correctColor(productElements) {
-    if (productElements.colors.value !== "") {
-        return true;
-    } else {
-        window.alert("Veuillez choisir une couleur.");
-        return false;
-    }
+	if (productElements.colors.value !== "") {
+		return true;
+	} else {
+		window.alert("Veuillez choisir une couleur.");
+		return false;
+	}
 }
 
 /**
@@ -80,12 +80,12 @@ function correctColor(productElements) {
  * @returns {boolean}
  */
 function correctQuantity(productElements) {
-    if (productElements.quantity.value > 0 && productElements.quantity.value <= 100) {
-        return true;
-    } else {
-        window.alert("Le nombre d'articles doit être compris entre 0 et 100.");
-        return false;
-    }
+	if (productElements.quantity.value > 0 && productElements.quantity.value <= 100) {
+		return true;
+	} else {
+		window.alert("Le nombre d'articles doit être compris entre 1 et 100.");
+		return false;
+	}
 }
 
 /**
@@ -93,12 +93,12 @@ function correctQuantity(productElements) {
  * @param {Object} productElements
  */
 function updateProduct(productElements) {
-    let choosenQuantity = productElements.quantity.value;
-    let choosenColor = productElements.colors.value;
+	let choosenQuantity = productElements.quantity.value;
+	let choosenColor = productElements.colors.value;
 
-    product.id = getProductId();
-    product.colors = choosenColor;
-    product.quantity = choosenQuantity;
+	product.id = getProductId();
+	product.colors = choosenColor;
+	product.quantity = choosenQuantity;
 }
 
 /** 
@@ -111,38 +111,38 @@ function updateProduct(productElements) {
  * @param {Object} productElements
  */
 function addToCart(productElements) {
-    if (!correctColor(productElements) || !correctQuantity(productElements)) {
-        return;
-    }
+	if (!correctColor(productElements) || !correctQuantity(productElements)) {
+		return;
+	}
 
-    updateProduct(productElements);
-    let productsInCart = JSON.parse(localStorage.getItem("cart"));
+	updateProduct(productElements);
+	let productsInCart = JSON.parse(localStorage.getItem("cart"));
 
-    if (!productsInCart) {
-        productsInCart = [];
-    }
+	if (!productsInCart) {
+		productsInCart = [];
+	}
 
-    const productInCart = productsInCart.find(
-        (productAlreadyInCart) =>
-        productAlreadyInCart.id === product.id &&
-        productAlreadyInCart.colors === product.colors
-    );
-    if (productInCart) {
-        let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
-        let newQuantity = newQuantityInNumber.toString();
+	const productInCart = productsInCart.find(
+		(productAlreadyInCart) =>
+		productAlreadyInCart.id === product.id &&
+		productAlreadyInCart.colors === product.colors
+	);
+	if (productInCart) {
+		let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
+		let newQuantity = newQuantityInNumber.toString();
 
-        if (newQuantity > 100) {
-            window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
-            return;
-        }
+		if (newQuantity > 100) {
+			window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
+			return;
+		}
 
-        productInCart.quantity = newQuantity;
-    } else {
-        productsInCart.push(product);
-    }
+		productInCart.quantity = newQuantity;
+	} else {
+		productsInCart.push(product);
+	}
 
-    localStorage.setItem("cart", JSON.stringify(productsInCart));
-    goToCartPage();
+	localStorage.setItem("cart", JSON.stringify(productsInCart));
+	goToCartPage();
 }
 
 /** 
@@ -150,10 +150,10 @@ function addToCart(productElements) {
  * @param {Object} productElements
  */
 function InitAddToCartButton(productElements) {
-    document.getElementById("addToCart").addEventListener("click", (event) => {
-        event.preventDefault();
-        addToCart(productElements);
-    });
+	document.getElementById("addToCart").addEventListener("click", (event) => {
+		event.preventDefault();
+		addToCart(productElements);
+	});
 }
 
 /** 
@@ -161,28 +161,28 @@ function InitAddToCartButton(productElements) {
  * Customer can click "ok" if they want to go to their cart
  */
 function goToCartPage() {
-    if (
-        window.confirm(
-            "Votre produit a été ajouté au panier avec succès. Pour le consulter, cliquez sur OK."
-        )
-    ) {
-        window.location.href = "cart.html";
-    }
+	if (
+		window.confirm(
+			"Votre produit a été ajouté au panier avec succès. Pour le consulter, cliquez sur OK."
+		)
+	) {
+		window.location.href = "cart.html";
+	}
 }
 
 /**
  * Function that contains all the functions that need for the DOM to be ready before starting
  */
 function DOMLoaded() {
-    const productElements = {
-        title: document.getElementById("title"),
-        price: document.getElementById("price"),
-        description: document.getElementById("description"),
-        colors: document.getElementById("colors"),
-        quantity: document.getElementById("quantity")
-    };
-    productFetch(productElements);
-    InitAddToCartButton(productElements);
+	const productElements = {
+		title: document.getElementById("title"),
+		price: document.getElementById("price"),
+		description: document.getElementById("description"),
+		colors: document.getElementById("colors"),
+		quantity: document.getElementById("quantity")
+	};
+	productFetch(productElements);
+	InitAddToCartButton(productElements);
 }
 
 /** 
