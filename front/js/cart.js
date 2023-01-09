@@ -21,7 +21,7 @@ function fetchApiProductById(productsInCart) {
 }
 
 /**
- * Create a div for the picture of the picture and put it in
+ * Create a div for the picture and put it in with the alt text
  * @param {HTMLElement} article 
  * @param {Object} apiProduct
  */
@@ -37,7 +37,7 @@ function displayProductPicture(article, apiProduct) {
 }
 
 /**
- * Create all the elements necessary for the displaying of the quantity
+ * Create all the elements necessary for the display of the quantity
  * Make sure the customer add the product within the 1-100 range
  * Add the delete button
  * @param {HTMLElement} cartItemContent 
@@ -75,10 +75,11 @@ function displayProductQuantity(cartItemContent, shoppingCartProduct) {
 
 /**
  * Check if the cart is empty or not
- * If it's empty, doesn't show the form
+ * If it's empty, doesn't show the form + display a short text
  * If it's not empty the function proceed
  * Create an element article
  * Create elements for the content and put the title, the colors and the price 
+ * Call the functions "modifyQuantityUpdatePrice" and "deleteProduct"
  * @param {Array} productsInCart
  * @param {HTMLElement} cartProducts
  */
@@ -321,7 +322,7 @@ function sendForm(productsInCart) {
 
 		/**
 		 * Check if the form in it's entirety is correctly filled
-		 * If it is, it creates an object contact in the local storage, otherwise, it display an error message
+		 * If it is, it creates an object order and use it for the URL of the confirmation page, otherwise, it display an error message
 		 * @returns {boolean}
 		 */
 		function formValidation() {

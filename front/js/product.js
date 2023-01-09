@@ -35,9 +35,8 @@ let product = {
 
 /**
  * Create an element image and put the picture of the product in it
- * Add product name, price, description, image and altTxt
+ * Add product name, price and description
  * Create an element option and put the available colors in it
- * Add the name, price, description, image and altTxt to the object product
  * @param {Object} selectedProduct 
  * @param {Object} productElements
  */
@@ -75,7 +74,7 @@ function correctColor(productElements) {
 }
 
 /**
- * Make sure the selected quantity is between 0 and 100
+ * Make sure the selected quantity is between 1 and 100
  * @param {Object} productElements
  * @returns {boolean}
  */
@@ -124,9 +123,9 @@ function addToCart(productElements) {
 
 	const productInCart = productsInCart.find(
 		(productAlreadyInCart) =>
-		productAlreadyInCart.id === product.id &&
-		productAlreadyInCart.colors === product.colors
+		productAlreadyInCart.id === product.id && productAlreadyInCart.colors === product.colors
 	);
+	
 	if (productInCart) {
 		let newQuantityInNumber = parseInt(productInCart.quantity) + parseInt(product.quantity);
 		let newQuantity = newQuantityInNumber.toString();
@@ -135,8 +134,8 @@ function addToCart(productElements) {
 			window.alert("Vous ne pouvez pas acheter plus de 100 exemplaires");
 			return;
 		}
-
 		productInCart.quantity = newQuantity;
+
 	} else {
 		productsInCart.push(product);
 	}
